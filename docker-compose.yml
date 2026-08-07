@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: sintera_db
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME:-sintera_production}
+      POSTGRES_USER: ${DB_USER:-sintera}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sintera_pass}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: sintera_app
+    restart: always
+    ports:
+      - "${HOST_PORT:-3000}:3000"
+    environment:
+      REDMINE_DB_POSTGRES: db
+      REDMINE_DB_DATABASE: ${DB_NAME:-sintera_production}
+      REDMINE_DB_USERNAME: ${DB_USER:-sintera}
+      REDMINE_DB_PASSWORD: ${POSTGRES_PASSWORD:-sintera_pass}
+      REDMINE_SECRET_KEY_BASE: ${SECRET_KEY_BASE:-clave_secreta_local_sintera_123456789}
+      RAILS_ENV: ${RAILS_ENV:-production}
+    volumes:
+      - sintera_files:/usr/src/redmine/files
+      - ./plugins:/usr/src/redmine/plugins
+      - ./public/themes:/usr/src/redmine/public/themes
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+  sintera_files:

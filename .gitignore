@@ -46,3 +46,9 @@
 
 /node_modules
 yarn-error.log
+.env
+/log/*.log
+/tmp/*
+/files/*
+/config/database.yml
+/config/secrets.yml
